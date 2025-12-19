@@ -1,36 +1,40 @@
-// Import express module
 const express = require("express");
+const connectDB = require("./config/database");
+const User = require("./models/user");
 
-// Create a instance of the Express application
 const app = express();
 
-// This will only handle GET call to "/user"
-app.get("/user", (req, res) => {
-  res.send({ name: "Eren", age: 22, isLoggedIn: true });
+app.post("/signup", async (req, res) => {
+  // Create a User Document
+  const user = new User({
+    firstName: "Peter",
+    lastName: "Parkour",
+    email: "peter@gmail.com",
+    password: "peter@123",
+    age: 23,
+    gender: "male",
+  });
+
+  try {
+    // Saving data to database
+    // it returns a promise hence await is used
+    await user.save();
+
+    // Send a success message
+    res.send("User added successfully!!");
+  } catch (err) {
+    res.status(400).send("Error adding the user: " + err.message);
+  }
 });
 
-// Only handle POST call to "/user"
-app.post("/user", (req, res) => {
-  res.send("Data successfully added to the database");
-});
+connectDB()
+  .then(() => {
+    console.log("Database connected successfully");
 
-// Only handle DELETE call to "/user"
-app.delete("/user", (req, res) => {
-  res.send("User deleted successfully");
-});
-
-// This will match alll the HTTP method API calls to "/test"
-app.use("/test", (req, res) => {
-  res.send("This is the testing file.");
-});
-
-// Route for the route(/) url
-app.use("/", (req, res) => {
-  res.send("Hurrah app is running....");
-});
-
-// Start the server on port 3000
-// Once the server starts, the callback function runs
-app.listen(3000, () => {
-  console.log("Server is successfully listening on port 3000....");
-});
+    app.listen(3000, () => {
+      console.log("Server is successfully listening on port 3000....");
+    });
+  })
+  .catch((err) => {
+    console.error("Databse connection failed", err);
+  });
