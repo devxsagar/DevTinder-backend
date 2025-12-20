@@ -4,16 +4,12 @@ const User = require("./models/user");
 
 const app = express();
 
+// middleware
+app.use(express.json());
+
 app.post("/signup", async (req, res) => {
   // Create a User Document
-  const user = new User({
-    firstName: "Peter",
-    lastName: "Parkour",
-    email: "peter@gmail.com",
-    password: "peter@123",
-    age: 23,
-    gender: "male",
-  });
+  const user = new User(req.body);
 
   try {
     // Saving data to database
