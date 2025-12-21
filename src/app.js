@@ -44,7 +44,7 @@ app.patch("/user", async (req, res) => {
     // await User.findByIdAndUpdate(userId, data); 
 
     // This is also correct or we can write like above one
-    await User.findByIdAndUpdate({ _id: userId }, data);
+    await User.findByIdAndUpdate({ _id: userId }, data, {runValidators: true});
     res.send("User data updated succesfully");
   } catch (error) {
     res.send("Something went wrong!!");

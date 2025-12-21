@@ -5,26 +5,56 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 // Creates a schema
-const userSchema = new Schema({
+const userSchema = new Schema(
+  {
     firstName: {
-        type: String,
+      type: String,
+      required: true,
+      minLength: 1,
     },
     lastName: {
-        type: String,
+      type: String,
     },
     password: {
-        type: String,
+      type: String,
+      required: true,
     },
     email: {
-        type: String,
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
     },
     age: {
-        type: Number,
+      type: Number,
+      min: 15,
+      required: true,
     },
     gender: {
-        type: String
-    }
-})
+      type: String,
+      validate(value) {
+        if(!["male", "female", "other"].includes(value)) {
+            throw new Error("Gender is not valid!")
+        }
+      }
+    },
+    aboutMe: {
+      type: String,
+      required: true,
+    },
+    photoUrl: {
+      type: String,
+      default:
+        "https://i.pinimg.com/736x/18/b5/b5/18b5b599bb873285bd4def283c0d3c09.jpg",
+    },
+    skills: {
+      type: [String],
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
 
 // Creates a model
 const User = mongoose.model("User", userSchema);
