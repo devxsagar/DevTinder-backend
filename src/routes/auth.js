@@ -27,7 +27,9 @@ router.post("/signup", async (req, res) => {
     await user.save();
 
     // Send a success message
-    res.send("User added successfully!!");
+    res
+      .status(200)
+      .json({ status: true, message: "User added successfully!!" });
   } catch (err) {
     res.status(400).send("Error adding the user: " + err.message);
   }
@@ -62,9 +64,25 @@ router.post("/login", async (req, res) => {
     const token = await user.getJWT();
     res.cookie("token", token);
 
-    res.send("Login successfull!!");
+    res.status(200).json({ status: true, message: "Login successfull!!" });
   } catch (error) {
     // 500 → Internal server error
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+});
+
+// Logout
+router.post("/logout", async (req, res) => {
+  try {
+    // res.cookie("token", null, { expires: new Date(Date.now()) });
+
+    res.clearCookie("token");
+
+    res.status(200).json({ success: true, message: "Logout successful" });
+  } catch (error) {
     res.status(500).json({
       message: "Server error",
       error: error.message,

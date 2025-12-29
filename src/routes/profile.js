@@ -4,7 +4,7 @@ const router = express.Router();
 const {userAuth} = require("../middlewares/auth");
 
 
-router.get("/profile", userAuth, async (req, res) => {
+router.get("/profile/view", userAuth, async (req, res) => {
   try {
     const user = req.user;
     res.send(user);
@@ -13,5 +13,8 @@ router.get("/profile", userAuth, async (req, res) => {
     res.status(401).send("Invalid or expired token");
   }
 });
+
+
+
 
 module.exports = router;
