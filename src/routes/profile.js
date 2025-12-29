@@ -12,13 +12,17 @@ router.get("/profile/view", userAuth, async (req, res, next) => {
   }
 });
 
-router.patch("/profile/update", async (req, res) => {
+router.patch("/profile/update", async (req, res, next) => {
   try {
     // Validate the data
     if (!validateProfileEditData(req)) {
-      return res.status(400).json({ message: "Invalid edit request" });
+      const err = new Error("Invalid edit request");
+      err.statusCode = 400;
+      throw err;
     }
-  } catch (error) {}
+  } catch (err) {
+    next(err);
+  }
 });
 
 module.exports = router;

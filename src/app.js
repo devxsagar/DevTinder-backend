@@ -15,6 +15,7 @@ app.use(cookieParser());
 app.use("/", authRouter);
 app.use("/", profileRouter);
 
+// Global Error handle middleware
 app.use(require("./middlewares/errorHandler"));
 
 // Get all the user for feed
