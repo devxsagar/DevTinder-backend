@@ -6,7 +6,9 @@ const userAuth = async (req, res, next) => {
     const { token } = req.cookies;
 
     if (!token) {
-      return res.status(401).json({message: "Authentication token missing"});
+      const err = new Error("Authentication token missing");
+      err.statusCode = 401;
+      throw err;
     }
 
     // Verity jwt token and extract id from token
@@ -16,14 +18,16 @@ const userAuth = async (req, res, next) => {
     const user = await User.findById(_id);
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      const err = new Error("User not found");
+      err.statusCode = 404;
+      throw err;
     }
 
     // Attach user to request object
     req.user = user;
     next();
-  } catch (error) {
-    return res.status(401).json({ message: "Invalid or expired token" });
+  } catch (err) {
+    next(err)
   }
 };
 

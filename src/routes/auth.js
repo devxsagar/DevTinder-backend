@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 const User = require("../models/user");
 
 // Sign up
-router.post("/signup", async (req, res) => {
+router.post("/signup", async (req, res, next) => {
   try {
     const { firstName, lastName, email, password } = req.body;
 
@@ -31,12 +31,12 @@ router.post("/signup", async (req, res) => {
       .status(200)
       .json({ status: true, message: "User added successfully!!" });
   } catch (err) {
-    res.status(400).send("Error adding the user: " + err.message);
+    next(err);
   }
 });
 
 // Login
-router.post("/login", async (req, res) => {
+router.post("/login", async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
@@ -45,9 +45,9 @@ router.post("/login", async (req, res) => {
 
     if (!user) {
       // 404 → User not found
-      return res.status(404).json({
-        message: "Invalid email or password",
-      });
+      const err = new Error("Invalid email or password");
+      err.statusCode = 404;
+      throw err;
     }
 
     // Compare entered password with hashed password stored in DB
@@ -55,9 +55,9 @@ router.post("/login", async (req, res) => {
 
     if (!isPasswordValid) {
       // 401 → Unauthorized (wrong credentials)
-      return res.status(401).json({
-        message: "Invalid email or password",
-      });
+      const err = new Error("Invalid email or password");
+      err.statusCode = 401;
+      throw err;
     }
 
     // If EMAIL and PASSWORD are valid, login is successfull
@@ -65,28 +65,21 @@ router.post("/login", async (req, res) => {
     res.cookie("token", token);
 
     res.status(200).json({ status: true, message: "Login successfull!!" });
-  } catch (error) {
-    // 500 → Internal server error
-    res.status(500).json({
-      message: "Server error",
-      error: error.message,
-    });
+  } catch (err) {
+    next(err);
   }
 });
 
 // Logout
-router.post("/logout", async (req, res) => {
+router.post("/logout", async (req, res, next) => {
   try {
     // res.cookie("token", null, { expires: new Date(Date.now()) });
 
     res.clearCookie("token");
 
     res.status(200).json({ success: true, message: "Logout successful" });
-  } catch (error) {
-    res.status(500).json({
-      message: "Server error",
-      error: error.message,
-    });
+  } catch (err) {
+    next(err);
   }
 });
 

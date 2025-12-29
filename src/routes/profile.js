@@ -1,20 +1,24 @@
 const express = require("express");
 const router = express.Router();
 
-const {userAuth} = require("../middlewares/auth");
+const { userAuth } = require("../middlewares/auth");
 
-
-router.get("/profile/view", userAuth, async (req, res) => {
+router.get("/profile/view", userAuth, async (req, res, next) => {
   try {
     const user = req.user;
     res.send(user);
-  } catch (error) {
-    console.error(error.message);
-    res.status(401).send("Invalid or expired token");
+  } catch (err) {
+    next(err);
   }
 });
 
-
-
+router.patch("/profile/update", async (req, res) => {
+  try {
+    // Validate the data
+    if (!validateProfileEditData(req)) {
+      return res.status(400).json({ message: "Invalid edit request" });
+    }
+  } catch (error) {}
+});
 
 module.exports = router;

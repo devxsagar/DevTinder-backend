@@ -15,7 +15,7 @@ app.use(cookieParser());
 app.use("/", authRouter);
 app.use("/", profileRouter);
 
-
+app.use(require("./middlewares/errorHandler"));
 
 // Get all the user for feed
 app.get("/feed", async (req, res) => {
