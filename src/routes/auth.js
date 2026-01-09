@@ -9,8 +9,6 @@ router.post("/signup", async (req, res, next) => {
   try {
     const { firstName, lastName, email, password } = req.body;
 
-    // Validate the data
-
     // Encrypt the password
     const hashPassword = await bcrypt.hash(password, 10);
 
@@ -43,8 +41,8 @@ router.post("/login", async (req, res, next) => {
     // Find user in database by email
     const user = await User.findOne({ email: email });
 
+    // 404 → User not found
     if (!user) {
-      // 404 → User not found
       const err = new Error("Invalid email or password");
       err.statusCode = 404;
       throw err;
