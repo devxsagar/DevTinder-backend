@@ -30,7 +30,6 @@ router.post(
         throw err;
       }
 
-
       // Prevents sending request to non-existing user
       const toUserExist = await User.findById(toUserId);
 
@@ -66,10 +65,58 @@ router.post(
       // Success response
       res.status(200).json({
         success: true,
-        message: "Connection request sent successfully",
+        message:
+          requestData.status === "interested"
+            ? "Interest sent successfully."
+            : "Profile ignored successfully.",
         data: requestData,
       });
     } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.post(
+  "/request/review/:status/:requestId",
+  userAuth,
+  async (req, res, next) => {
+    try {
+      const loggedInUser = req.user;
+      const { status, requestId } = req.params;
+
+      // Checking the status
+      const allowedStatus = ["accepted", "rejected"];
+
+      if (!allowedStatus.includes(status)) {
+        const err = new Error("Status is not valid");
+        err.statusCode = 400;
+        throw err;
+      }
+
+      // Prevent non-existing request
+      const connectionRequest = await ConnectionRequest.findOne({
+        _id: requestId,
+        toUserId: loggedInUser._id,
+        status: "interested",
+      });
+
+      if (!connectionRequest) {
+        const err = new Error("Connection request is not valid.");
+        err.statusCode = 404;
+        throw err;
+      }
+
+      connectionRequest.status = status;
+
+      const data = await connectionRequest.save();
+
+      res.status(200).json({
+        success: true,
+        data: data,
+        message: "Connection request " + status,
+      });
+    } catch(err) {
       next(err);
     }
   }

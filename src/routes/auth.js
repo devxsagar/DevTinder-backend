@@ -21,7 +21,6 @@ router.post("/signup", async (req, res, next) => {
     });
 
     // Saving data to database
-    // it returns a promise hence await is used
     await user.save();
 
     // Send a success message
