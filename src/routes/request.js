@@ -4,6 +4,7 @@ const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
 const router = express.Router();
 
+// Handle Status -> Interested or Ingonred
 router.post(
   "/request/send/:status/:userId",
   userAuth,
@@ -77,6 +78,7 @@ router.post(
   }
 );
 
+// Handle Status -> Accepted or Rejected
 router.post(
   "/request/review/:status/:requestId",
   userAuth,
