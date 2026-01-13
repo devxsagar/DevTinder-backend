@@ -26,7 +26,7 @@ router.post("/signup", async (req, res, next) => {
     // Send a success message
     res
       .status(200)
-      .json({ status: true, message: "User added successfully!!" });
+      .json({ success: true, message: "User added successfully!!" });
   } catch (err) {
     next(err);
   }
@@ -61,7 +61,7 @@ router.post("/login", async (req, res, next) => {
     const token = await user.getJWT();
     res.cookie("token", token);
 
-    res.status(200).json({ status: true, message: "Login successfull!!" });
+    res.status(200).json({ success: true, message: "Login successfull!!" });
   } catch (err) {
     next(err);
   }

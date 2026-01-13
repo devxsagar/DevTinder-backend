@@ -11,27 +11,18 @@ const userRouter = require("./routes/user");
 
 const app = express();
 
-// middleware
+// Middlewares
 app.use(express.json());
 app.use(cookieParser());
 
+// Routes
 app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", requestRouter);
 app.use("/", userRouter);
 
-// Global Error handle middleware
+// Global Error Handler Middleware
 app.use(require("./middlewares/errorHandler"));
-
-// Get all the user for feed
-app.get("/feed", async (req, res) => {
-  try {
-    const users = await User.find({});
-    res.send(users);
-  } catch (error) {
-    res.send("Something went wrong!!");
-  }
-});
 
 connectDB()
   .then(() => {
