@@ -3,6 +3,7 @@ const router = express.Router();
 
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
+const { BASIC_USER_FIELDS } = require("../utils/constants");
 
 // Sign up
 router.post("/signup", async (req, res, next) => {
@@ -61,7 +62,7 @@ router.post("/login", async (req, res, next) => {
     const token = await user.getJWT();
     res.cookie("token", token);
 
-    res.status(200).json({ success: true, message: "Login successfull!!" });
+    res.status(200).json({ success: true, message: "Login successfull!!", data: user });
   } catch (err) {
     next(err);
   }
