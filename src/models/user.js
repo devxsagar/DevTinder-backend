@@ -37,24 +37,31 @@ const userSchema = new mongoose.Schema(
         }
       },
     },
+    dateOfBirth: {
+      type: Date,
+    },
     age: {
       type: Number,
-      min: 15,
+      min: [15, "Age must be atleast 15 years"],
     },
     gender: {
       type: String,
       enum: {
         values: ["male", "female", "other"],
-        message: `{VALUE} is not a valid gender type.`,
+        message: `Please select a valid gender.`,
       },
     },
     aboutMe: {
       type: String,
+      trim: true,
+      maxlength: [120, "About me should be less than 160 characters"],
+    },
+    role: {
+      type: String,
+      trim: true,
     },
     photoUrl: {
       type: String,
-      default:
-        "https://i.pinimg.com/736x/18/b5/b5/18b5b599bb873285bd4def283c0d3c09.jpg",
       validate: (value) => {
         if (!validator.isURL(value)) {
           throw new Error("URL is not valid");
@@ -64,8 +71,26 @@ const userSchema = new mongoose.Schema(
     skills: {
       type: [String],
     },
+    location: {
+      type: String,
+      trim: true,
+      default: "Not specified",
+    },
+    isProfileCompleted: {
+      type: Boolean,
+      default: false,
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: {
+      transform(doc, ret) {
+        delete ret.password; // Remove password from API response
+        delete ret.__v;
+        return ret;
+      },
+    },
+  },
 );
 
 userSchema.methods.getJWT = async function () {

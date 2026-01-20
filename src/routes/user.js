@@ -22,7 +22,7 @@ router.get("/user/requests/received", userAuth, async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      data: connectionRequests,
+      connectionRequests,
       message: "Fetch data successfully",
     });
   } catch (err) {
@@ -58,7 +58,7 @@ router.get("/user/connections", userAuth, async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      data,
+      accedptedConections: data,
       message: "Fetch data successfully",
     });
   } catch (err) {
@@ -111,7 +111,7 @@ router.get("/feed", userAuth, async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      data: users,
+      users,
       message: "Data fetched successfully",
     });
   } catch (err) {
