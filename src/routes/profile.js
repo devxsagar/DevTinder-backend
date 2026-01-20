@@ -7,13 +7,15 @@ const { validateProfileEditData } = require("../utils/validation");
 router.get("/profile/view", userAuth, async (req, res, next) => {
   try {
     const user = req.user;
-    res.send(user);
+    res
+      .status(200)
+      .json({ success: true, message: "Fetch data successfully", user });
   } catch (err) {
     next(err);
   }
 });
 
-router.patch("/profile/update", userAuth, async (req, res, next) => {
+router.patch("/profile/edit", userAuth, async (req, res, next) => {
   try {
     // Validate the data
     if (!validateProfileEditData(req)) {
@@ -24,19 +26,26 @@ router.patch("/profile/update", userAuth, async (req, res, next) => {
 
     const loggedInUser = req.user;
 
+    // Check if this is first-time profile completion
+    const isFirstTime = !loggedInUser.isProfileCompleted;
+
     // Updating the user profile
     Object.keys(req.body).forEach((key) => (loggedInUser[key] = req.body[key]));
+
+    // Mark profile as completed (only once)
+    if (!loggedInUser.isProfileCompleted) {
+      loggedInUser.isProfileCompleted = true;
+    }
 
     // Save the updated user profile
     await loggedInUser.save();
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: `${loggedInUser.firstName}, Your profile updated successfully.`,
-        data: loggedInUser
-      });
+    res.status(200).json({
+      success: true,
+      message: `${loggedInUser.firstName}, Your profile updated successfully.`,
+      user: loggedInUser,
+      isFirstTime,
+    });
   } catch (err) {
     next(err);
   }

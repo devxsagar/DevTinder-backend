@@ -22,12 +22,20 @@ router.post("/signup", async (req, res, next) => {
     });
 
     // Saving data to database
-    await user.save();
+    const signUpUser = await user.save();
+
+    // Generate token and attach to cookie
+    const token = await signUpUser.getJWT();
+    res.cookie("token", token);
 
     // Send a success message
     res
       .status(200)
-      .json({ success: true, message: "User added successfully!!" });
+      .json({
+        success: true,
+        message: "User added successfully!!",
+        user: signUpUser,
+      });
   } catch (err) {
     next(err);
   }
@@ -62,7 +70,9 @@ router.post("/login", async (req, res, next) => {
     const token = await user.getJWT();
     res.cookie("token", token);
 
-    res.status(200).json({ success: true, message: "Login successfull!!", data: user });
+    res
+      .status(200)
+      .json({ success: true, message: "Login successfull!!", user });
   } catch (err) {
     next(err);
   }
