@@ -10,10 +10,12 @@ const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
 
+require("dotenv").config();
+
 const app = express();
 
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: process.env.CLIENT_URL,
   credentials: true,
 };
 
@@ -35,7 +37,7 @@ connectDB()
   .then(() => {
     console.log("Database connected successfully");
 
-    app.listen(3000, () => {
+    app.listen(process.env.PORT, () => {
       console.log("Server is successfully listening on port 3000....");
     });
   })

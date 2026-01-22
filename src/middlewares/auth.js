@@ -12,7 +12,7 @@ const userAuth = async (req, res, next) => {
     }
 
     // Verity jwt token and extract id from token
-    const decodeObj = jwt.verify(token, "DEV@Tinder19");
+    const decodeObj = jwt.verify(token, process.env.JWT_SECRET);
     const { _id } = decodeObj;
 
     const user = await User.findById(_id);
