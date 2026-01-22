@@ -26,16 +26,18 @@ router.post("/signup", async (req, res, next) => {
 
     // Generate token and attach to cookie
     const token = await signUpUser.getJWT();
-    res.cookie("token", token);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
 
     // Send a success message
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "User added successfully!!",
-        user: signUpUser,
-      });
+    res.status(200).json({
+      success: true,
+      message: "User added successfully!!",
+      user: signUpUser,
+    });
   } catch (err) {
     next(err);
   }
@@ -68,7 +70,11 @@ router.post("/login", async (req, res, next) => {
 
     // If EMAIL and PASSWORD are valid, login is successfull
     const token = await user.getJWT();
-    res.cookie("token", token);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
 
     res
       .status(200)
